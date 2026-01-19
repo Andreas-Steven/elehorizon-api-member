@@ -1,0 +1,37 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Yii console bootstrap file.
+ *
+ * @link https://www.yiiframework.com/
+ * @copyright Copyright (c) 2008 Yii Software LLC
+ * @license https://www.yiiframework.com/license/
+ */
+
+// defined('YII_DEBUG') or define('YII_DEBUG', true);
+// defined('YII_ENV') or define('YII_ENV', 'dev');
+
+$appRoot = __DIR__;
+
+// --- Load helper custom untuk ENV ---
+require_once $appRoot . '/core/Environment.php';
+
+// --- Composer autoload ---
+require $appRoot . '/vendor/autoload.php';
+
+// --- Load .env ---
+$dotenv = Dotenv\Dotenv::createImmutable($appRoot);
+$dotenv->safeLoad(); // safeLoad agar tidak error jika file .env tidak ada
+
+// --- Define Yii constants dari ENV ---
+defined('YII_ENV') or define('YII_ENV', $_ENV['YII_ENV'] ?? 'prod');
+defined('YII_DEBUG') or define('YII_DEBUG', filter_var($_ENV['YII_DEBUG'] ?? false, FILTER_VALIDATE_BOOLEAN));
+defined('YII_TRACE') or define('YII_TRACE', filter_var($_ENV['YII_TRACE'] ?? false, FILTER_VALIDATE_BOOLEAN));
+
+require $appRoot . '/vendor/yiisoft/yii2/Yii.php';
+
+$config = require $appRoot . '/config/console.php';
+
+$application = new yii\console\Application($config);
+$exitCode = $application->run();
+exit($exitCode);

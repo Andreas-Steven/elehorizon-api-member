@@ -1,0 +1,89 @@
+{
+    "name": "rahmatsyaparudin/yii2-boilerplate",
+    "description": "Yii2 API Boilerplate",
+    "keywords": [],
+    "homepage": "https://github.com/rahmatsyaparudin/yii2-boilerplate",
+    "type": "project",
+    "license": "BSD-3-Clause",
+    "minimum-stability": "stable",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/rahmatsyaparudin/yii2-api-skeleton.git"
+        }
+    ],
+    "require": {
+        "php": ">=7.4.0",
+        "yiisoft/yii2": "^2.0.53",
+        "yiisoft/yii2-bootstrap5": "^2.0.3",
+        "yiisoft/yii2-symfonymailer": "^2.0.3",
+        "yiisoft/db-pgsql": "^1.0",
+        "mongodb/mongodb": "^1.20",
+        "firebase/php-jwt": "^6.10",
+        "paragonie/sodium_compat": "^2.0",
+        "vlucas/phpdotenv": "^5.6"
+    },
+    "require-dev": {
+        "yiisoft/yii2-debug": "~2.1.0",
+        "yiisoft/yii2-gii": "^2.2",
+        "yiisoft/yii2-faker": "~2.0.0",
+        "codeception/codeception": "^5.0.0 || ^4.0",
+        "codeception/lib-innerbrowser": "^4.0 || ^3.0 || ^1.1",
+        "codeception/module-asserts": "^3.0 || ^1.1",
+        "codeception/module-yii2": "^1.1",
+        "codeception/module-filesystem": "^3.0 || ^2.0 || ^1.1",
+        "codeception/verify": "^3.0 || ^2.2",
+        "symfony/browser-kit": "^6.0 || >=2.7 <=4.2.4",
+        "rahmatsyaparudin/yii2-api-skeleton": "dev-main"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true,
+        "preferred-install": "dist",
+        "process-timeout": 1800,
+        "allow-plugins": {
+            "yiisoft/yii2-composer" : true
+        },
+        "fxp-asset": {
+            "enabled": false
+        },
+        "platform": {
+            "php": "8.3.13"
+        }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "yii\\composer\\Installer::postInstall"
+        ],
+        "post-create-project-cmd": [
+            "yii\\composer\\Installer::postCreateProject",
+            "yii\\composer\\Installer::postInstall"
+        ],
+        "skeleton-update": [
+            "php scripts/install-skeleton.php"
+        ],
+        "skeleton-copy-examples": [
+            "php scripts/copy-examples.php"
+        ]
+    },
+    "extra": {
+        "yii\\composer\\Installer::postCreateProject": {
+            "setPermission": [
+                {
+                    "runtime": "0777",
+                    "web/assets": "0777",
+                    "yii": "0755"
+                }
+            ]
+        },
+        "yii\\composer\\Installer::postInstall": {
+            "generateCookieValidationKey": [
+                "config/web.php"
+            ]
+        }
+    }
+}
