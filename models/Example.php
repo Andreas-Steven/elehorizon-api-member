@@ -63,7 +63,8 @@ class Example extends ActiveRecord
      * {@inheritdoc}
      * @return string the column name for optimistic locking of $lockVersion.
      */
-    public function optimisticLock() {
+    public function optimisticLock() 
+    {
         // return Constants::OPTIMISTIC_LOCK;
     }
 

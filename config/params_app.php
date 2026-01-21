@@ -43,7 +43,9 @@ $params['defaultValue'] = [
  * is allowed fields for json data in model
  */
 $params['allowedFields'] = [
-    
+    'service' => [
+        'installationService' => ['id', 'qty']
+    ]
 ];
 
 /**

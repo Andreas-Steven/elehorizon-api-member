@@ -16,4 +16,10 @@ return array_merge($core_translation, [
      * --------------------------------------------------------------------------
      */
 
+    'serviceOrderFailed' => 'Failed to process Service Order data.',
+    'invalidValue' => '{label} is invalid value',
+    'selectServiceType' => 'Please select service type',
+    'selectInstallationPackage' => 'Please select Installation Package',
+    'selectInstallationService' => 'Please select Installation Service',
+    'selectCleaningType' => 'Please select Cleaning Type',
 ]);

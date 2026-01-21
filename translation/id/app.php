@@ -15,6 +15,11 @@ return array_merge($core_translation, [
      * Add your custom translation below
      * --------------------------------------------------------------------------
      */
-
+    
+    'serviceOrderFailed' => 'Gagal memproses data Service Order.',
+    'invalidValue' => '{label} adalah nilai yang tidak valid',
+    'selectServiceType' => 'Silakan pilih jenis layanan',
+    'selectInstallationPackage' => 'Silakan pilih Paket Instalasi',
+    'selectInstallationService' => 'Silakan pilih Layanan Instalasi',
+    'selectCleaningType' => 'Silakan pilih Jenis Pembersihan',
 ]);
-
