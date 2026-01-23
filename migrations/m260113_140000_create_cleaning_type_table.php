@@ -67,7 +67,7 @@ class m260113_140000_create_cleaning_type_table extends Migration
                     ],
                     'recommended_for' => 'AC yang digunakan rutin 2-3 bulan terakhir',
                 ],
-                'status' => $dbDefault['status'],
+                'status' => $dbDefault['statusService'],
                 'detail_info' => [
                     'change_log' => [
                         'created_at' => null,
@@ -82,7 +82,7 @@ class m260113_140000_create_cleaning_type_table extends Migration
             [
                 'name' => 'General Cleaning',
                 'description' => 'Cuci AC lengkap dengan pembongkaran unit indoor untuk pembersihan maksimal',
-                'base_price' => 250000,
+                'base_price' => 250000.00,
                 'estimated_duration' => 90,
                 'detail_service' => [
                     'services' => [
@@ -109,7 +109,7 @@ class m260113_140000_create_cleaning_type_table extends Migration
                     ],
                     'recommended_for' => 'AC yang jarang dibersihkan (>6 bulan) atau mengalami masalah kinerja',
                 ],
-                'status' => $dbDefault['status'],
+                'status' => $dbDefault['statusService'],
                 'detail_info' => [
                     'change_log' => [
                         'created_at' => $UTCTimestamp,

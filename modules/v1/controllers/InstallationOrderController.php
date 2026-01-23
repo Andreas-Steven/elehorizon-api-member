@@ -16,10 +16,10 @@ use app\core\CoreController;
 /**
  * Model required components
  */
-use app\models\ServiceOrder;
-use app\models\search\ServiceOrderSearch;
+use app\models\InstallationOrder;
+use app\models\search\InstallationOrderSearch;
 
-class ServiceOrderController extends CoreController
+class InstallationOrderController extends CoreController
 {
 	public function behaviors()
     {
@@ -40,7 +40,7 @@ class ServiceOrderController extends CoreController
 	{
 		$params = Yii::$app->getRequest()->getBodyParams();
 
-		$searchModel = new ServiceOrderSearch();
+		$searchModel = new InstallationOrderSearch();
 		$dataProvider = $searchModel->search($params);
 
 		CoreController::validateProvider($dataProvider, $searchModel);
@@ -51,9 +51,9 @@ class ServiceOrderController extends CoreController
     public function actionList()
 	{
 		$params = Yii::$app->getRequest()->getBodyParams();
-        $params['member_id'] = 1;
+        $params['member_profile_id'] = 1;
 
-		$searchModel = new ServiceOrderSearch();
+		$searchModel = new InstallationOrderSearch();
 		$dataProvider = $searchModel->search($params);
 
 		CoreController::validateProvider($dataProvider, $searchModel);
@@ -63,7 +63,7 @@ class ServiceOrderController extends CoreController
 
     public function actionCreate()
 	{
-		$model = new ServiceOrder();
+		$model = new InstallationOrder();
 		$params = Yii::$app->getRequest()->getBodyParams();
 		$scenario = Constants::SCENARIO_CREATE;
 

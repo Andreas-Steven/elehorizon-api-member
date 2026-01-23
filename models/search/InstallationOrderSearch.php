@@ -7,10 +7,10 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
 use app\core\CoreModel;
-use app\models\ServiceOrder;
+use app\models\InstallationOrder;
 use app\helpers\Constants;
 
-class ServiceOrderSearch extends ServiceOrder
+class InstallationOrderSearch extends InstallationServiceOrder
 {
     public $page;
     public $page_size;
@@ -27,8 +27,8 @@ class ServiceOrderSearch extends ServiceOrder
     {
         return ArrayHelper::merge(
             [
-                [['id', 'member_id', 'installation_package_id', 'cleaning_type_id', 'pipe_grade_id', 'qty'], 'integer'],
-                [['client_uuid', 'service_type', 'installation_service', 'pricing', 'detail_info', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'deleted_by'], 'safe'],
+                [['id', 'member_profile_id', 'installation_package_id', 'cleaning_type_id', 'pipe_grade_id', 'qty'], 'integer'],
+                [['client_uuid', 'service_type', 'installation_service', 'pricing', 'detail_info', 'detail_address', 'schedule', 'note', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'deleted_by'], 'safe'],
             ],
             CoreModel::getPaginationRules($this)
         );
@@ -47,7 +47,7 @@ class ServiceOrderSearch extends ServiceOrder
             return $unavailableParams;
         }
 
-        $query = ServiceOrder::find();
+        $query = InstallationServiceOrder::find();
         $query->where(Constants::STATUS_NOT_DELETED);
 
         $dataProvider = new ActiveDataProvider([
@@ -60,9 +60,8 @@ class ServiceOrderSearch extends ServiceOrder
 
         $query->andFilterWhere([
             'id' => $this->id,
-            'member_id' => $this->member_id,
+            'member_profile_id' => $this->member_profile_id,
             'installation_package_id' => $this->installation_package_id,
-            'cleaning_type_id' => $this->cleaning_type_id,
             'pipe_grade_id' => $this->pipe_grade_id,
             'qty' => $this->qty,
         ]);

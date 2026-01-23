@@ -30,13 +30,14 @@ $params['dbDefault'] = [
     'skipMigrateFresh' => 'Skipping migration/fresh for non-dev environment.\n',
 
     #Add your new database default values here
+    'statusService' => 1,
 ];
 
 /**
  * is default value for json fields in model
  */
 $params['defaultValue'] = [
-    
+    'phone' => '/^(62)[1-9][0-9]{7,12}$/',
 ];
 
 /**
@@ -44,7 +45,10 @@ $params['defaultValue'] = [
  */
 $params['allowedFields'] = [
     'service' => [
-        'installationService' => ['id', 'qty']
+        'installationService' => ['id', 'qty'],
+        'detail_address' => ['address', 'city', 'district', 'sub_district', 'zip_code', 'location'],
+        'location' => ['lat', 'lng'],
+        'schedule' => ['date', 'time_slot'],
     ]
 ];
 

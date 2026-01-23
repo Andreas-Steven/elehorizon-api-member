@@ -5,7 +5,7 @@ namespace app\models\query;
 use yii\db\ActiveQuery;
 use app\helpers\Constants;
 
-class ServiceOrderQuery extends ActiveQuery
+class InstallationOrderQuery extends ActiveQuery
 {
     public function all($db = null)
     {

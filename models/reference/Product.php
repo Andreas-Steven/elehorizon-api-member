@@ -14,6 +14,7 @@ use yii\db\ActiveRecord;
  */
 use app\core\CoreModel;
 use app\helpers\Constants;
+use app\models\reference\Brand;
 
 /**
  * This is the model class for table "product".
@@ -47,5 +48,10 @@ class Product extends ActiveRecord
     {
         static::$connection = $connectionName;
         return new static();
+    }
+
+    public function getBrand()
+    {
+        return $this->hasOne(Brand::class, ['id' => 'brand_id']);
     }
 }
