@@ -22,8 +22,8 @@ class m260122_094108_create_cleaning_order_table extends Migration
             'product_variant_id' => $this->integer()->notNull(),
             'category_id' => $this->integer()->notNull(),
             'cleaning_type_id' => $this->integer()->notNull(),
-            'ac_condition' => $this->json()->notNull()->defaultValue(json_encode([])),
-            'ac_desciption' => $this->text()->null(),
+            'unit_condition' => $this->json()->notNull()->defaultValue(json_encode([])),
+            'unit_desciption' => $this->text()->null(),
             'qty' => $this->integer()->notNull()->defaultValue(1),
             'pricing' => $this->json()->notNull()->defaultValue(json_encode([])),
             'detail_address' => $this->json()->notNull()->defaultValue(json_encode([])),
@@ -58,7 +58,7 @@ class m260122_094108_create_cleaning_order_table extends Migration
                 'category_id' => 1,
                 'product_variant_id' => 1,
                 'cleaning_type_id' => 1,
-                'ac_condition' => [
+                'unit_condition' => [
                     [
                         'id' => 1,
                         'name' => 'Kurang Dingin',
@@ -76,7 +76,7 @@ class m260122_094108_create_cleaning_order_table extends Migration
                         'name' => 'Rutin Cuci',
                     ],
                 ],
-                'ac_desciption' => 'Lorem Ipsum',
+                'unit_desciption' => 'Lorem Ipsum',
                 'qty' => 1,
                 'pricing' => [
                     'cleaning_type_price' => 150000,

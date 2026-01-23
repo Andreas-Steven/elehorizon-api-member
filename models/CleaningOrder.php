@@ -2,15 +2,24 @@
 
 namespace app\models;
 
+/**
+ * Yii required components
+ */
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\db\ActiveRecord;
+
+/**
+ * Model required components
+ */
 use app\core\CoreModel;
 use app\helpers\Constants;
 use app\exceptions\ErrorMessage;
+
+use app\models\MemberProfile;
 use app\models\reference\CleaningType;
 use app\models\reference\ProductVariant;
-use app\models\MemberProfile;
+use app\models\reference\UnitCondition;
 
 class CleaningOrder extends ActiveRecord
 {
@@ -41,13 +50,13 @@ class CleaningOrder extends ActiveRecord
     {
         return ArrayHelper::merge(
             [
-                [['ac_condition', 'pricing', 'detail_address', 'schedule', 'note', 'ac_desciption', 'detail_info'], 'safe'],
+                [['unit_condition', 'pricing', 'detail_address', 'schedule', 'note', 'unit_condition', 'unit_desciption', 'detail_info'], 'safe'],
                 [['service_type_id', 'member_profile_id', 'product_variant_id', 'category_id', 'cleaning_type_id', 'qty', 'status'], 'integer'],
 
-                [['member_profile_id', 'service_type_id', 'product_variant_id', 'category_id', 'cleaning_type_id', 'qty', 'detail_address', 'schedule'], 'required', 'on' => [Constants::SCENARIO_CREATE, Constants::SCENARIO_UPDATE]],
-
+                [['member_profile_id', 'service_type_id', 'product_variant_id', 'category_id', 'cleaning_type_id', 'unit_condition', 'qty', 'detail_address', 'schedule'], 'required', 'on' => [Constants::SCENARIO_CREATE, Constants::SCENARIO_UPDATE]],
                 [['service_type_id', 'member_profile_id', 'product_variant_id', 'category_id', 'cleaning_type_id', 'qty'], 'filter', 'filter' => 'intval', 'on' => [Constants::SCENARIO_CREATE, Constants::SCENARIO_UPDATE]],
-                [['ac_condition'], function ($attribute) {
+                
+                [['unit_condition'], function ($attribute) {
                     CoreModel::validateAttributeArray($this, $attribute, $this->getAttributeLabel($attribute));
                 }],
                 [['detail_address'], function ($attribute) {
@@ -70,8 +79,8 @@ class CleaningOrder extends ActiveRecord
     {
         $scenarios = parent::scenarios();
 
-        $scenarios[Constants::SCENARIO_CREATE] = ['member_profile_id', 'service_type_id', 'product_variant_id', 'category_id', 'cleaning_type_id', 'ac_condition', 'ac_desciption', 'qty', 'pricing', 'detail_address', 'schedule', 'note', 'status', 'detail_info'];
-        $scenarios[Constants::SCENARIO_UPDATE] = ['member_profile_id', 'service_type_id', 'product_variant_id', 'category_id', 'cleaning_type_id', 'ac_condition', 'ac_desciption', 'qty', 'pricing', 'detail_address', 'schedule', 'note', 'status', 'detail_info'];
+        $scenarios[Constants::SCENARIO_CREATE] = ['member_profile_id', 'service_type_id', 'product_variant_id', 'category_id', 'cleaning_type_id', 'unit_condition', 'unit_desciption', 'qty', 'pricing', 'detail_address', 'schedule', 'note', 'status', 'detail_info'];
+        $scenarios[Constants::SCENARIO_UPDATE] = ['member_profile_id', 'service_type_id', 'product_variant_id', 'category_id', 'cleaning_type_id', 'unit_condition', 'unit_desciption', 'qty', 'pricing', 'detail_address', 'schedule', 'note', 'status', 'detail_info'];
         $scenarios[Constants::SCENARIO_DELETE] = ['status', 'detail_info'];
 
         return $scenarios;
@@ -86,8 +95,8 @@ class CleaningOrder extends ActiveRecord
             'product_variant_id' => 'Product Variant ID',
             'category_id' => 'Category ID',
             'cleaning_type_id' => 'Cleaning Type ID',
-            'ac_condition' => 'AC Condition',
-            'ac_desciption' => 'AC Description',
+            'unit_condition' => 'Unit Condition',
+            'unit_desciption' => 'Unit Description',
             'qty' => 'Quantity',
             'pricing' => 'Pricing',
             'detail_address' => 'Detail Address',
@@ -107,7 +116,7 @@ class CleaningOrder extends ActiveRecord
     {
         if (parent::beforeValidate()) {
             $this->note = CoreModel::htmlPurifier($this->note);
-            $this->ac_desciption = CoreModel::htmlPurifier($this->ac_desciption);
+            $this->unit_desciption = CoreModel::htmlPurifier($this->unit_desciption);
             
             if (intval($this->service_type_id) !== Constants::SERVICE_TYPE_CLEANING) {
                 $this->addError('Cleaning Order', Yii::t('app', 'invalidValue', ['label' => 'Service Type']));
@@ -130,6 +139,7 @@ class CleaningOrder extends ActiveRecord
             if ($this->scenario === Constants::SCENARIO_CREATE) {
                 $this->pricing = $this->getPricing($cleaningType ?? null);
                 $serviceType = $this->validateServiceType('service_type_id');
+                $this->validateUnitCondition('unit_condition');
             }
 
             $this->detail_info = [
@@ -218,6 +228,16 @@ class CleaningOrder extends ActiveRecord
         ];
     }
 
+    public function validateServiceType($attribute)
+    {
+        $serviceType = $this->$attribute;
+
+        return [
+            'id' => intval($serviceType),
+            'name' => Constants::CLEANING_SERVICE_TYPE_LIST[intval($serviceType)] ?? null,
+        ];
+    }
+
     private function getPricing($cleaningType = null): array
     {
         $cleaningTypePrice = 0;
@@ -237,14 +257,28 @@ class CleaningOrder extends ActiveRecord
         ];
     }
 
-    public function validateServiceType($attribute)
+    public function validateUnitCondition($attribute)
     {
-        $serviceType = $this->$attribute;
+        $unitCondition = CoreModel::ensureArray($this->$attribute);
+        $unitCondition = array_filter($unitCondition, function($condition) {
+            return !in_array($condition, ['[]', '', null, 'null'], true);
+        });
 
-        return [
-            'id' => intval($serviceType),
-            'name' => Constants::CLEANING_SERVICE_TYPE_LIST[intval($serviceType)] ?? null,
-        ];
+        $unit_condition = [];
+        foreach ($unitCondition as $value) {
+            $data = UnitCondition::find()->where(['id' => intval($value), 'status' => Constants::STATUS_ACTIVE])->one();
+            if (empty($data)) {
+                $this->addError($attribute, Yii::t('app', 'invalidValue', ['label' => 'Unit Condition']));
+                throw new ErrorMessage($this, Yii::t('app', 'serviceOrderFailed'), 422);
+            }
+
+            $unit_condition[] = [
+                'id' => intval($value),
+                'name' => $data->name,
+            ];
+        }
+
+        $this->$attribute = $unit_condition;
     }
 
     public function validateSchedule($attribute, $params)
