@@ -55,8 +55,8 @@ class m260122_094108_create_cleaning_order_table extends Migration
             [
                 'member_profile_id' => 1,
                 'service_type_id' => 1,
-                'product_variant_id' => 1,
                 'category_id' => 1,
+                'product_variant_id' => 1,
                 'cleaning_type_id' => 1,
                 'ac_condition' => [
                     [

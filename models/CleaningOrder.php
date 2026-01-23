@@ -214,6 +214,7 @@ class CleaningOrder extends ActiveRecord
         return [
             'id' => intval($this->cleaningType->id),
             'name' => $this->cleaningType->name ?? null,
+            'base_price' => $this->cleaningType->base_price ?? null,
         ];
     }
 
