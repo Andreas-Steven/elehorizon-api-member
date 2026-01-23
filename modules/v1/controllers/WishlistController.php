@@ -28,6 +28,7 @@ class WishlistController extends CoreController
             $behaviors['verbs']['actions'],
             [
                 'index' => ['get'],
+                'list' => ['post'],
                 'toggle' => ['post'],
             ]
         );
@@ -39,6 +40,19 @@ class WishlistController extends CoreController
     {
         $params = Yii::$app->getRequest()->getBodyParams();
 
+        $searchModel = new WishlistSearch();
+        $dataProvider = $searchModel->search($params);
+
+        CoreController::validateProvider($dataProvider, $searchModel);
+
+        return CoreController::coreData($dataProvider);
+    }
+
+    public function actionList()
+    {
+        $params = Yii::$app->getRequest()->getBodyParams();
+
+        $params['member_profile_id'] = 1;
         $searchModel = new WishlistSearch();
         $dataProvider = $searchModel->search($params);
 
