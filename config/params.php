@@ -133,6 +133,7 @@ $params['verbsAction'] = [
     'update' => ['put'],
     'delete' => ['delete'],
     'view'   => ['post'],
+    'toggle' => ['post'],
 ];
 
 /**
