@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `{{%wishlist}}`.
  */
-class m260123_163700_create_wishlist_table extends Migration
+class m260127_163700_create_wishlist_table extends Migration
 {
     private $tableName = 'wishlist';
 

@@ -2,23 +2,14 @@
 
 namespace app\modules\v1\controllers;
 
-/**
- * Yii required components
- */
 use Yii;
-use yii\web\Response;
-use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use app\helpers\Constants;
 use app\core\CoreController;
+use app\models\Cart;
+use app\models\search\CartSearch;
 
-/**
- * Model required components
- */
-use app\models\Wishlist;
-use app\models\search\WishlistSearch;
-
-class WishlistController extends CoreController
+class CartController extends CoreController
 {
     public function behaviors()
     {
@@ -28,8 +19,10 @@ class WishlistController extends CoreController
             $behaviors['verbs']['actions'],
             [
                 'index' => ['get'],
+                'data' => ['post'],
                 'list' => ['post'],
-                'toggle' => ['post'],
+                'create' => ['post'],
+                'delete' => ['post'],
             ]
         );
 
@@ -40,7 +33,7 @@ class WishlistController extends CoreController
     {
         $params = Yii::$app->getRequest()->getBodyParams();
 
-        $searchModel = new WishlistSearch();
+        $searchModel = new CartSearch();
         $dataProvider = $searchModel->search($params);
 
         CoreController::validateProvider($dataProvider, $searchModel);
@@ -53,7 +46,7 @@ class WishlistController extends CoreController
         $params = Yii::$app->getRequest()->getBodyParams();
 
         $params['member_profile_id'] = 1;
-        $searchModel = new WishlistSearch();
+        $searchModel = new CartSearch();
         $dataProvider = $searchModel->search($params);
 
         CoreController::validateProvider($dataProvider, $searchModel);
@@ -61,30 +54,27 @@ class WishlistController extends CoreController
         return CoreController::coreData($dataProvider);
     }
 
-    public function actionToggle()
+    public function actionCreate()
     {
-        $model = new Wishlist();
+        $model = new Cart();
         $params = Yii::$app->getRequest()->getBodyParams();
         $scenario = Constants::SCENARIO_CREATE;
 
         CoreController::unavailableParams($model, $params);
 
-        $productVariantId = $params['product_variant_id'] ?? null;
         $memberProfileId = $params['member_profile_id'] ?? null;
-        
-        if (!empty($productVariantId) && !empty($memberProfileId)) {
+        if (!empty($memberProfileId)) {
 		    $existing = CoreController::coreFindModelOne($model, $params, ['status' => [Constants::STATUS_ACTIVE, Constants::STATUS_DRAFT]]);
 
             if ($existing) {
-                $existing->scenario = Constants::SCENARIO_DELETE;
-                $existing->status = Constants::STATUS_DELETED;
+                $existing->scenario = Constants::SCENARIO_UPDATE;
                 
-                if ($model->load($params, '') && $model->validate()) {
-			        CoreController::emptyParams($model);
+                if ($existing->load($params, '') && $existing->validate()) {
+			        // CoreController::emptyParams($existing);
 
                     if ($existing->save()) {
                         #uncomment below code if you want to insert data to mongodb
-				        // Yii::$app->mongodb->upsert($model);
+				        // Yii::$app->mongodb->upsert($existing);
                         
                         return CoreController::coreSuccess($existing);
                     }

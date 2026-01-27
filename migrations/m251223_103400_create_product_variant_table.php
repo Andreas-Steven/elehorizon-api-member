@@ -20,6 +20,8 @@ class m251223_103400_create_product_variant_table extends Migration
             'product_id' => $this->integer()->notNull(),
             'variant_code' => $this->string(100)->notNull(),
             'sku' => $this->string(255)->notNull(),
+            'original_price' =>$this->decimal(10, 2)->notNull(),
+            'price' => $this->decimal(10, 2)->notNull(),
             'image_url' => $this->json()->notNull()->defaultValue(json_encode([])),
             'detail_specs' => $this->json()->notNull()->defaultValue(json_encode([])),
             'status' => $this->smallInteger()->notNull()->defaultValue($dbDefault['status'])->comment($dbDefault['statusComment']),
@@ -59,6 +61,8 @@ class m251223_103400_create_product_variant_table extends Migration
                 'sku' => '05F5S',
                 'product_id' => 1,
                 'stock' => 10,
+                'original_price' => 4829000.00,
+                'price' => 4469000.00,
                 'image_url' => [
                     'https://www.selka.id/assets/images/product/gree/ac-split/gree_gwc-05f5s_250.jpg?v20251103=',
                 ],
@@ -126,6 +130,8 @@ class m251223_103400_create_product_variant_table extends Migration
                 'sku' => '09F5S',
                 'product_id' => 1,
                 'stock' => 10,
+                'original_price' => 5159000.00,
+                'price' => 5090000.00,
                 'image_url' => [
                     'https://www.selka.id/assets/images/product/gree/ac-split/gree_gwc-09f5s_250.jpg?v20251103=',
                 ],
@@ -176,6 +182,10 @@ class m251223_103400_create_product_variant_table extends Migration
                 ],
                 'status' => 1,
                 'change_log' => [
+                    'product' => [
+                        'id' => 1,
+                        'name' => 'Gree F5S Series',
+                    ],
                     'created_at' => $UTCTimestamp,
                     'created_by' => $dbDefault['createdBy'],
                     'deleted_at' => null,
@@ -189,6 +199,8 @@ class m251223_103400_create_product_variant_table extends Migration
                 'sku' => '12F5S',
                 'product_id' => 1,
                 'stock' => 10,
+                'original_price' => 6179000.00,
+                'price' => 5719000.00,
                 'image_url' => [
                     'https://www.selka.id/assets/images/product/gree/ac-split/gree_gwc-12f5s_250.jpg?v20251103=',
                 ],
@@ -239,6 +251,10 @@ class m251223_103400_create_product_variant_table extends Migration
                 ],
                 'status' => 1,
                 'change_log' => [
+                    'product' => [
+                        'id' => 1,
+                        'name' => 'Gree F5S Series',
+                    ],
                     'created_at' => $UTCTimestamp,
                     'created_by' => $dbDefault['createdBy'],
                     'deleted_at' => null,
@@ -252,6 +268,8 @@ class m251223_103400_create_product_variant_table extends Migration
                 'sku' => '18F5S',
                 'product_id' => 1,
                 'stock' => 10,
+                'original_price' => 8639000.00,
+                'price' => 7999000.00,
                 'image_url' => [
                     'https://www.selka.id/assets/images/product/gree/ac-split/gree_gwc-18f5s_250.jpg?v20251103=',
                 ],
@@ -302,6 +320,10 @@ class m251223_103400_create_product_variant_table extends Migration
                 ],
                 'status' => 1,
                 'change_log' => [
+                    'product' => [
+                        'id' => 1,
+                        'name' => 'Gree F5S Series',
+                    ],
                     'created_at' => $UTCTimestamp,
                     'created_by' => $dbDefault['createdBy'],
                     'deleted_at' => null,
@@ -315,6 +337,8 @@ class m251223_103400_create_product_variant_table extends Migration
                 'sku' => '24F5S',
                 'product_id' => 1,
                 'stock' => 10,
+                'original_price' => 10779000.00,
+                'price' => 9979000.00,
                 'image_url' => [
                     'https://www.selka.id/assets/images/product/gree/ac-split/gree_gwc-24f5s_250.jpg?v20251103=',
                 ],
@@ -365,6 +389,10 @@ class m251223_103400_create_product_variant_table extends Migration
                 ],
                 'status' => 1,
                 'change_log' => [
+                    'product' => [
+                        'id' => 1,
+                        'name' => 'Gree F5S Series',
+                    ],
                     'created_at' => $UTCTimestamp,
                     'created_by' => $dbDefault['createdBy'],
                     'deleted_at' => null,

@@ -17,6 +17,8 @@ return array_merge($core_translation, [
      */
     
     'serviceOrderFailed' => 'Gagal memproses data Service Order.',
+    'cartFailed' => 'Gagal memproses data Keranjang.',
+
     'invalidValue' => '{label} adalah nilai yang tidak valid',
     'selectServiceType' => 'Silakan pilih jenis layanan',
     'selectInstallationPackage' => 'Silakan pilih Paket Instalasi',
