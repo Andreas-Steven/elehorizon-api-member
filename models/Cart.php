@@ -106,7 +106,7 @@ class Cart extends ActiveRecord
     {
         if (parent::beforeValidate()) {
             if (empty($this->product_order_id) && empty($this->installation_order_id) && empty($this->cleaning_order_id)) {
-                $this->addError('product_order_id', Yii::t('app', 'cartFailed'));
+                $this->addError('Cart', Yii::t('app', 'cartFailed'));
                 return false;
             }
 
