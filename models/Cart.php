@@ -22,6 +22,7 @@ use app\models\InstallationOrder;
 
 class Cart extends ActiveRecord
 {
+    public $memberData;
     public $product_order_id;
     public $cleaning_order_id;
     public $installation_order_id;
@@ -56,7 +57,8 @@ class Cart extends ActiveRecord
                 [['member_profile_id', 'product_order_id', 'installation_order_id', 'cleaning_order_id'], 'integer'],
 
                 [['member_profile_id'], 'required', 'on' => [Constants::SCENARIO_CREATE, Constants::SCENARIO_UPDATE]],
-                [['member_profile_id', 'product_order_id', 'installation_order_id', 'cleaning_order_id'], 'filter', 'filter' => 'intval', 'on' => [Constants::SCENARIO_CREATE, Constants::SCENARIO_UPDATE]],
+
+                [['member_profile_id'], 'validateMember'],
             ],
             CoreModel::getStatusRules($this),
             // CoreModel::getLockVersionRulesOnly(),
@@ -67,9 +69,9 @@ class Cart extends ActiveRecord
     public function scenarios()
     {
         $scenarios = parent::scenarios();
-        $scenarios[Constants::SCENARIO_CREATE] = ['member_profile_id', 'product_order_id', 'installation_order_id', 'cleaning_order_id', 'items', 'note', 'status', 'detail_info'];
-        $scenarios[Constants::SCENARIO_UPDATE] = ['member_profile_id', 'product_order_id', 'installation_order_id', 'cleaning_order_id', 'items', 'note', 'status', 'detail_info'];
-        $scenarios[Constants::SCENARIO_DELETE] = ['detail_info', 'status'];
+        $scenarios[Constants::SCENARIO_CREATE] = ['member_profile_id', 'product_order_id', 'installation_order_id', 'cleaning_order_id', 'items', 'status', 'detail_info'];
+        $scenarios[Constants::SCENARIO_UPDATE] = ['member_profile_id', 'product_order_id', 'installation_order_id', 'cleaning_order_id', 'items', 'status', 'detail_info'];
+        $scenarios[Constants::SCENARIO_DELETE] = ['member_profile_id', 'product_order_id', 'installation_order_id', 'cleaning_order_id', 'items', 'status', 'detail_info'];
 
         return $scenarios;
     }
@@ -117,22 +119,49 @@ class Cart extends ActiveRecord
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            if (!empty($this->cleaning_order_id)) 
-            {
-                $this->validateCleaning('cleaning_order_id');
+            if ($this->scenario === Constants::SCENARIO_DELETE) {
+                $items = CoreModel::ensureArray($this->items);
+
+                if (!empty($this->cleaning_order_id)) {
+                    $items = $this->removeItemsByKeyValue($items, 'cleaning_order_id', intval($this->cleaning_order_id));
+                }
+
+                if (!empty($this->installation_order_id)) {
+                    $items = $this->removeItemsByKeyValue($items, 'installation_order_id', intval($this->installation_order_id));
+                }
+
+                if (!empty($this->product_order_id)) {
+                    $items = $this->removeItemsByKeyValue($items, 'product_order_id', intval($this->product_order_id));
+                }
+
+                $this->items = array_values($items);
+
+                $this->detail_info = [
+                    'member_profile' => $this->memberData ?? [],
+                    'change_log' => CoreModel::getChangeLog($this, $insert),
+                ];
+
+                return true;
             }
 
-            if (!empty($this->installation_order_id)) 
-            {
-                $this->validateInstallation('installation_order_id');
-            }
+            if ($this->scenario === Constants::SCENARIO_CREATE) {
+                $items = CoreModel::ensureArray($this->items);
 
-            if (!empty($this->product_order_id)) 
-            {
-                $this->validateProduct('product_order_id');
+                if (!empty($this->cleaning_order_id)) {
+                    $this->validateCleaning('cleaning_order_id');
+                }
+    
+                if (!empty($this->installation_order_id)) {
+                    $this->validateInstallation('installation_order_id');
+                }
+    
+                if (!empty($this->product_order_id)) {
+                    $this->validateProduct('product_order_id');
+                }
             }
             
             $this->detail_info = [
+                'member_profile' => $this->memberData ?? [],
                 'change_log' => CoreModel::getChangeLog($this, $insert),
             ];
 
@@ -156,6 +185,28 @@ class Cart extends ActiveRecord
         parent::afterFind();
     }
 
+    public function validateMember($attribute)
+    {
+        if (is_string($this->$attribute) && !ctype_digit($this->$attribute))
+        {
+            $this->addError($attribute, Yii::t('app', 'integer', ['label' => 'Member Profile ID']));
+            return false;
+        }
+        
+        $memberProfileId = intval($this->$attribute);
+        $memberProfile = MemberProfile::findOne(['id' => $memberProfileId, 'status' => Constants::STATUS_ACTIVE]);
+        if (!$memberProfile) {
+            $this->addError($attribute, Yii::t('app', 'fieldDataNotFound', ['label' => 'Member Profile']));
+            return false;
+        }
+
+        $this->$attribute = $memberProfileId;
+        $this->memberData = [
+            'id' => intval($memberProfile->id),
+            'name' => $memberProfile->name,
+        ];
+    }
+
     public function validateProduct($attribute)
     {
         $productOrder = ProductOrder::findOne(['id' => intval($this->$attribute), 'member_profile_id' => intval($this->member_profile_id), 'status' => Constants::STATUS_ACTIVE]);
@@ -177,7 +228,6 @@ class Cart extends ActiveRecord
         $item = [];
         $item['item_type'] = 'product';
         $item['product_order_id'] = intval($productOrder->id);
-        $item['name'] = $productOrder->name;
         $item['product_order'] = [
             'id' => intval($productOrder->id),
             'product_variant_id' => intval($productOrderItem['product_variant_id']),
@@ -191,7 +241,6 @@ class Cart extends ActiveRecord
         ];
         $item['note'] = $productOrder->note;
 
-        $items = CoreModel::ensureArray($this->items);
         $items[] = $item;
         $this->items = $items;
     }
@@ -250,7 +299,6 @@ class Cart extends ActiveRecord
         $item['qty'] = intval($cleaningOrder->qty);
         $item['note'] = $cleaningOrder->note;
 
-        $items = CoreModel::ensureArray($this->items);
         $items[] = $item;
         $this->items = $items;
     }
@@ -310,8 +358,25 @@ class Cart extends ActiveRecord
         $item['qty'] = intval($installationOrder->qty);
         $item['note'] = $installationOrder->note;
 
-        $items = CoreModel::ensureArray($this->items);
         $items[] = $item;
         $this->items = $items;
+    }
+
+    public function removeItemsByKeyValue(array $items, string $key, int $id): array
+    {
+        $filtered = [];
+
+        foreach ($items as $item) {
+            if (!is_array($item)) {
+                $filtered[] = $item;
+                continue;
+            }
+
+            if (!array_key_exists($key, $item) || intval($item[$key]) !== $id) {
+                $filtered[] = $item;
+            }
+        }
+
+        return $filtered;
     }
 }

@@ -95,4 +95,38 @@ class CartController extends CoreController
 
         return CoreController::coreError($model);
     }
+
+    public function actionDelete()
+    {
+        $model = new Cart();
+        $params = Yii::$app->getRequest()->getBodyParams();
+
+        CoreController::unavailableParams($model, $params);
+
+        $memberProfileId = $params['member_profile_id'] ?? null;
+        if (empty($memberProfileId)) {
+            return CoreController::coreBadRequest([], Yii::t('app', 'validationFailed'));
+        }
+
+        $existing = Cart::find()
+            ->where([
+                'member_profile_id' => intval($memberProfileId),
+                'status' => [Constants::STATUS_ACTIVE, Constants::STATUS_DRAFT],
+            ])
+            ->one();
+
+        if (!$existing) {
+            return CoreController::coreDataNotFound();
+        }
+
+        $existing->scenario = Constants::SCENARIO_DELETE;
+
+        if ($existing->load($params, '') && $existing->validate()) {
+            if ($existing->save()) {
+                return CoreController::coreSuccess($existing);
+            }
+        }
+
+        return CoreController::coreError($existing);
+    }
 }

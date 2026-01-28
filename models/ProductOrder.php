@@ -37,11 +37,11 @@ class ProductOrder extends ActiveRecord
     {
         return ArrayHelper::merge(
             [
-                [['name'], 'string', 'max' => 255],
+                [[''], 'string', 'max' => 255],
                 [['id', 'member_profile_id', 'status'], 'integer'],
                 [['detail_address', 'pricing_summary', 'items', 'note', 'detail_info'], 'safe'],
 
-                [['name', 'member_profile_id'], 'required', 'on' => [Constants::SCENARIO_CREATE, Constants::SCENARIO_UPDATE]],
+                [['member_profile_id'], 'required', 'on' => [Constants::SCENARIO_CREATE, Constants::SCENARIO_UPDATE]],
                 
                 [['member_profile_id'], 'filter', 'filter' => 'intval', 'on' => [Constants::SCENARIO_CREATE, Constants::SCENARIO_UPDATE]],
                 [['items'], function ($attribute) {
@@ -60,8 +60,8 @@ class ProductOrder extends ActiveRecord
     public function scenarios()
     {
         $scenarios = parent::scenarios();
-        $scenarios[Constants::SCENARIO_CREATE] = ['name', 'member_profile_id', 'items', 'detail_address', 'pricing_summary', 'note', 'status', 'detail_info', 'sync_mdb', 'lock_version'];
-        $scenarios[Constants::SCENARIO_UPDATE] = ['name', 'member_profile_id', 'items', 'detail_address', 'pricing_summary', 'note', 'status', 'detail_info', 'sync_mdb', 'lock_version'];
+        $scenarios[Constants::SCENARIO_CREATE] = ['member_profile_id', 'items', 'detail_address', 'pricing_summary', 'note', 'status', 'detail_info', 'sync_mdb', 'lock_version'];
+        $scenarios[Constants::SCENARIO_UPDATE] = ['member_profile_id', 'items', 'detail_address', 'pricing_summary', 'note', 'status', 'detail_info', 'sync_mdb', 'lock_version'];
         $scenarios[Constants::SCENARIO_DELETE] = ['status', 'sync_mdb', 'lock_version'];
 
         return $scenarios;
@@ -71,7 +71,6 @@ class ProductOrder extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
             'member_profile_id' => 'Member Profile ID',
             'items' => 'Items',
             'detail_address' => 'Detail Address',
@@ -101,7 +100,6 @@ class ProductOrder extends ActiveRecord
     {
         if (parent::beforeValidate()) {
             $this->note = CoreModel::htmlPurifier($this->note);
-            $this->name = CoreModel::htmlPurifier($this->name);
 
             if ($this->items === null) {
                 $this->items = [];
