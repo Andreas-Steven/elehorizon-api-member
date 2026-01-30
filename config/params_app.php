@@ -70,4 +70,17 @@ $params['settings'] = [
     
 ];
 
+$params['checkout'] = [
+    'expiry_minutes' => 1440,
+    'shipping_cost' => 45000,
+];
+
+$params['payment'] = [
+    'bca' => [
+        'bank' => 'BCA',
+        'account_number' => '1234567890',
+        'account_name' => 'CV Elektro Techindo Horizon',
+    ],
+];
+
 return $params;

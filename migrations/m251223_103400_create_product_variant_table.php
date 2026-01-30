@@ -18,7 +18,6 @@ class m251223_103400_create_product_variant_table extends Migration
             'name' => $this->string(255)->notNull(),
             'stock' => $this->integer(),
             'product_id' => $this->integer()->notNull(),
-            'variant_code' => $this->string(100)->notNull(),
             'sku' => $this->string(255)->notNull(),
             'original_price' =>$this->decimal(10, 2)->notNull(),
             'price' => $this->decimal(10, 2)->notNull(),
@@ -26,8 +25,8 @@ class m251223_103400_create_product_variant_table extends Migration
             'detail_specs' => $this->json()->notNull()->defaultValue(json_encode([])),
             'status' => $this->smallInteger()->notNull()->defaultValue($dbDefault['status'])->comment($dbDefault['statusComment']),
             'detail_info' => $this->json()->notNull()->defaultValue(json_encode([
+                'product' => [],
                 'change_log' => [
-                    'product' => [],
                     'created_at' => null,
                     'created_by' => null,
                     'deleted_at' => null,
@@ -39,7 +38,6 @@ class m251223_103400_create_product_variant_table extends Migration
         ]);
 
         $this->createIndex('idx_product_variant_product_id', '{{%' . $this->tableName . '}}', 'product_id');
-        $this->createIndex('uq_product_variant_code', '{{%' . $this->tableName . '}}', 'variant_code', true);
         $this->addForeignKey(
             'fk_product_variant_product',
             '{{%' . $this->tableName . '}}',
@@ -55,7 +53,7 @@ class m251223_103400_create_product_variant_table extends Migration
             return true;
         }
 
-        $initialVariants = [
+        $initialData = [
             [
                 'name' => 'Gree GWC-05F5S 0.5 PK',
                 'sku' => '05F5S',
@@ -112,17 +110,23 @@ class m251223_103400_create_product_variant_table extends Migration
                     ],
                 ],
                 'status' => 1,
-                'change_log' => [
+                'detail_info' => [
                     'product' => [
                         'id' => 1,
                         'name' => 'Gree F5S Series',
+                        'brand' => [
+                            'id' => 2,
+                            'name' => 'Gree',
+                        ],
                     ],
-                    'created_at' => $UTCTimestamp,
-                    'created_by' => $dbDefault['createdBy'],
-                    'deleted_at' => null,
-                    'deleted_by' => null,
-                    'updated_at' => null,
-                    'updated_by' => null,
+                    'change_log' => [
+                        'created_at' => $UTCTimestamp,
+                        'created_by' => $dbDefault['createdBy'],
+                        'deleted_at' => null,
+                        'deleted_by' => null,
+                        'updated_at' => null,
+                        'updated_by' => null,
+                    ],
                 ],
             ],
             [
@@ -181,17 +185,23 @@ class m251223_103400_create_product_variant_table extends Migration
                     ],
                 ],
                 'status' => 1,
-                'change_log' => [
+                'detail_info' => [
                     'product' => [
                         'id' => 1,
                         'name' => 'Gree F5S Series',
+                        'brand' => [
+                            'id' => 2,
+                            'name' => 'Gree',
+                        ],
                     ],
-                    'created_at' => $UTCTimestamp,
-                    'created_by' => $dbDefault['createdBy'],
-                    'deleted_at' => null,
-                    'deleted_by' => null,
-                    'updated_at' => null,
-                    'updated_by' => null,
+                    'change_log' => [
+                        'created_at' => $UTCTimestamp,
+                        'created_by' => $dbDefault['createdBy'],
+                        'deleted_at' => null,
+                        'deleted_by' => null,
+                        'updated_at' => null,
+                        'updated_by' => null,
+                    ],
                 ],
             ],
             [
@@ -250,17 +260,23 @@ class m251223_103400_create_product_variant_table extends Migration
                     ],
                 ],
                 'status' => 1,
-                'change_log' => [
+                'detail_info' => [
                     'product' => [
                         'id' => 1,
                         'name' => 'Gree F5S Series',
+                        'brand' => [
+                            'id' => 2,
+                            'name' => 'Gree',
+                        ],
                     ],
-                    'created_at' => $UTCTimestamp,
-                    'created_by' => $dbDefault['createdBy'],
-                    'deleted_at' => null,
-                    'deleted_by' => null,
-                    'updated_at' => null,
-                    'updated_by' => null,
+                    'change_log' => [
+                        'created_at' => $UTCTimestamp,
+                        'created_by' => $dbDefault['createdBy'],
+                        'deleted_at' => null,
+                        'deleted_by' => null,
+                        'updated_at' => null,
+                        'updated_by' => null,
+                    ],
                 ],
             ],
             [
@@ -319,17 +335,23 @@ class m251223_103400_create_product_variant_table extends Migration
                     ],
                 ],
                 'status' => 1,
-                'change_log' => [
+                'detail_info' => [
                     'product' => [
                         'id' => 1,
                         'name' => 'Gree F5S Series',
+                        'brand' => [
+                            'id' => 2,
+                            'name' => 'Gree',
+                        ],
                     ],
-                    'created_at' => $UTCTimestamp,
-                    'created_by' => $dbDefault['createdBy'],
-                    'deleted_at' => null,
-                    'deleted_by' => null,
-                    'updated_at' => null,
-                    'updated_by' => null,
+                    'change_log' => [
+                        'created_at' => $UTCTimestamp,
+                        'created_by' => $dbDefault['createdBy'],
+                        'deleted_at' => null,
+                        'deleted_by' => null,
+                        'updated_at' => null,
+                        'updated_by' => null,
+                    ],
                 ],
             ],
             [
@@ -388,38 +410,38 @@ class m251223_103400_create_product_variant_table extends Migration
                     ],
                 ],
                 'status' => 1,
-                'change_log' => [
+                'detail_info' => [
                     'product' => [
                         'id' => 1,
                         'name' => 'Gree F5S Series',
+                        'brand' => [
+                            'id' => 2,
+                            'name' => 'Gree',
+                        ],
                     ],
-                    'created_at' => $UTCTimestamp,
-                    'created_by' => $dbDefault['createdBy'],
-                    'deleted_at' => null,
-                    'deleted_by' => null,
-                    'updated_at' => null,
-                    'updated_by' => null,
+                    'change_log' => [
+                        'created_at' => $UTCTimestamp,
+                        'created_by' => $dbDefault['createdBy'],
+                        'deleted_at' => null,
+                        'deleted_by' => null,
+                        'updated_at' => null,
+                        'updated_by' => null,
+                    ],
                 ],
             ],
         ];
 
-        foreach ($initialVariants as $variant) {
-            if (!isset($variant['product_id']) || !$variant['product_id']) {
-                continue;
-            }
+        #uncomment below code if you want to insert data to mongodb
+        // $mongodb = new Client($mongodb_param['dsn']);
+        // $collection = $mongodb->selectCollection($mongodb_param['database'], $this->tableName);
+        // $collection->drop();
 
-            if (!isset($variant['variant_code']) || $variant['variant_code'] === null || $variant['variant_code'] === '') {
-                $variant['variant_code'] = $variant['sku'] ?? null;
-            }
+        foreach ($initialData as $value) {
+            $this->insert('{{%' . $this->tableName . '}}', $value);
 
-            if (isset($variant['change_log'])) {
-                $variant['detail_info'] = [
-                    'change_log' => $variant['change_log'],
-                ];
-                unset($variant['change_log']);
-            }
-
-            $this->insert('{{%' . $this->tableName . '}}', $variant);
+            #uncomment below code if you want to insert data to mongodb
+            // $insertID['id'] = $key + 1;
+            // $collection->insertOne(array_merge($insertID, $value));
         }
     }
 

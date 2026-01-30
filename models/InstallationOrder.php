@@ -289,7 +289,6 @@ class InstallationOrder extends ActiveRecord
                 'id' => intval($this->productVariant->id),
                 'name' => $this->productVariant->name,
                 'sku' => $this->productVariant->sku,
-                'variant_code' => $this->productVariant->variant_code,
                 'brand' => $brand,
                 'product' => [
                     'id' => $product ? intval($product->id) : null,

@@ -183,7 +183,6 @@ class CleaningOrder extends ActiveRecord
             'id' => intval($this->productVariant->id),
             'name' => $this->productVariant->name,
             'sku' => $this->productVariant->sku,
-            'variant_code' => $this->productVariant->variant_code,
             'brand' => $product && $product->brand ? [
                 'id' => intval($product->brand->id),
                 'name' => $product->brand->name,

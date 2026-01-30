@@ -37,6 +37,19 @@ class ProductOrderController extends CoreController
         return CoreController::coreData($dataProvider);
     }
 
+    public function actionList()
+    {
+        $params = Yii::$app->getRequest()->getBodyParams();
+
+        $params['member_profile_id'] = 1;
+        $searchModel = new ProductOrderSearch();
+        $dataProvider = $searchModel->search($params);
+
+        CoreController::validateProvider($dataProvider, $searchModel);
+
+        return CoreController::coreData($dataProvider);
+    }
+
     public function actionCreate()
     {
         $model = new ProductOrder();

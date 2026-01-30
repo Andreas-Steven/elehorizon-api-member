@@ -23,7 +23,13 @@ class m260125_140000_create_product_order_table extends Migration
             'member_profile_id' => $this->integer()->notNull(),
             'items' => $this->json()->notNull()->defaultValue(json_encode([])),
             'detail_address' => $this->json()->notNull()->defaultValue(json_encode([])),
-            'pricing_summary' => $this->json()->notNull()->defaultValue(json_encode([])),
+            'pricing_summary' => $this->json()->notNull()->defaultValue(json_encode([
+                'currency' => $dbDefault['currency'] ?? 'IDR',
+                'subtotal' => 0,
+                'discount' => 0,
+                'shipping' => 0,
+                'grand_total' => 0,
+            ])),
             'note' => $this->text()->null(),
             'status' => $this->smallInteger()->notNull()->defaultValue($dbDefault['status'])->comment($dbDefault['statusComment']),
             'detail_info' => $this->json()->notNull()->defaultValue(json_encode([
@@ -95,7 +101,7 @@ class m260125_140000_create_product_order_table extends Migration
         ];
 
         foreach ($dummyData as $value) {
-            $this->insert('{{%' . $this->tableName . '}}', $value);
+            // $this->insert('{{%' . $this->tableName . '}}', $value);
         }
     }
 

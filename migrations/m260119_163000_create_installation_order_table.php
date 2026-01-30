@@ -95,7 +95,6 @@ class m260119_163000_create_installation_order_table extends Migration
                         'id' => 1,
                         'name' => 'Gree GWC-05F5S 0.5 PK',
                         'sku' => '05F5S',
-                        'variant_code' => null,
                         'product' => [
                             'id' => 1,
                             'name' => 'Gree GWC-05F5S',
@@ -198,7 +197,6 @@ class m260119_163000_create_installation_order_table extends Migration
                         'id' => 1,
                         'name' => 'Gree GWC-05F5S 0.5 PK',
                         'sku' => '05F5S',
-                        'variant_code' => null,
                         'product' => [
                             'id' => 1,
                             'name' => 'Gree GWC-05F5S',
@@ -278,7 +276,6 @@ class m260119_163000_create_installation_order_table extends Migration
                         'id' => 1,
                         'name' => 'Gree GWC-05F5S 0.5 PK',
                         'sku' => '05F5S',
-                        'variant_code' => null,
                         'product' => [
                             'id' => 1,
                             'name' => 'Gree GWC-05F5S',

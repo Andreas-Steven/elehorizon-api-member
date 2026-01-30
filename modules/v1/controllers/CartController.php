@@ -64,7 +64,7 @@ class CartController extends CoreController
 
         $memberProfileId = $params['member_profile_id'] ?? null;
         if (!empty($memberProfileId)) {
-		    $existing = CoreController::coreFindModelOne($model, $params, ['status' => [Constants::STATUS_ACTIVE, Constants::STATUS_DRAFT]]);
+		    $existing = CoreController::coreFindModelOne($model, ['member_profile_id' => $memberProfileId], ['status' => [Constants::STATUS_ACTIVE, Constants::STATUS_DRAFT]]);
 
             if ($existing) {
                 $existing->scenario = Constants::SCENARIO_UPDATE;

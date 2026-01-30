@@ -115,7 +115,6 @@ class m260122_094108_create_cleaning_order_table extends Migration
                         'id' => 1,
                         'name' => 'Gree GWC-05F5S 0.5 PK',
                         'sku' => '05F5S',
-                        'variant_code' => null,
                         'product' => [
                             'id' => 1,
                             'name' => 'Gree GWC-05F5S',

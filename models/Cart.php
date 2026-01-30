@@ -54,7 +54,9 @@ class Cart extends ActiveRecord
         return ArrayHelper::merge(
             [
                 [['items', 'note', 'detail_info'], 'safe'],
-                [['member_profile_id', 'product_order_id', 'installation_order_id', 'cleaning_order_id'], 'integer'],
+                [['product_order_id', 'installation_order_id', 'cleaning_order_id'], 'safe', 'on' => [Constants::SCENARIO_DELETE]],
+                [['member_profile_id'], 'integer'],
+                [['product_order_id', 'installation_order_id', 'cleaning_order_id'], 'integer', 'on' => [Constants::SCENARIO_CREATE, Constants::SCENARIO_UPDATE]],
 
                 [['member_profile_id'], 'required', 'on' => [Constants::SCENARIO_CREATE, Constants::SCENARIO_UPDATE]],
 
@@ -122,19 +124,43 @@ class Cart extends ActiveRecord
             if ($this->scenario === Constants::SCENARIO_DELETE) {
                 $items = CoreModel::ensureArray($this->items);
 
-                if (!empty($this->cleaning_order_id)) {
-                    $items = $this->removeItemsByKeyValue($items, 'cleaning_order_id', intval($this->cleaning_order_id));
-                }
+                $productIds = is_array($this->product_order_id)
+                    ? array_map('intval', $this->product_order_id)
+                    : (!empty($this->product_order_id) ? [intval($this->product_order_id)] : []);
 
-                if (!empty($this->installation_order_id)) {
-                    $items = $this->removeItemsByKeyValue($items, 'installation_order_id', intval($this->installation_order_id));
-                }
+                $installationIds = is_array($this->installation_order_id)
+                    ? array_map('intval', $this->installation_order_id)
+                    : (!empty($this->installation_order_id) ? [intval($this->installation_order_id)] : []);
 
-                if (!empty($this->product_order_id)) {
-                    $items = $this->removeItemsByKeyValue($items, 'product_order_id', intval($this->product_order_id));
-                }
+                $cleaningIds = is_array($this->cleaning_order_id)
+                    ? array_map('intval', $this->cleaning_order_id)
+                    : (!empty($this->cleaning_order_id) ? [intval($this->cleaning_order_id)] : []);
 
-                $this->items = array_values($items);
+                $productIds = array_values(array_unique(array_filter($productIds)));
+                $installationIds = array_values(array_unique(array_filter($installationIds)));
+                $cleaningIds = array_values(array_unique(array_filter($cleaningIds)));
+
+                $productMap = !empty($productIds) ? array_flip($productIds) : [];
+                $installationMap = !empty($installationIds) ? array_flip($installationIds) : [];
+                $cleaningMap = !empty($cleaningIds) ? array_flip($cleaningIds) : [];
+
+                $this->items = array_values(array_filter($items, function ($item) use ($productMap, $installationMap, $cleaningMap) {
+                    if (!is_array($item)) {
+                        return true;
+                    }
+
+                    if (!empty($cleaningMap) && array_key_exists('cleaning_order_id', $item) && array_key_exists(intval($item['cleaning_order_id']), $cleaningMap)) {
+                        return false;
+                    }
+                    if (!empty($installationMap) && array_key_exists('installation_order_id', $item) && array_key_exists(intval($item['installation_order_id']), $installationMap)) {
+                        return false;
+                    }
+                    if (!empty($productMap) && array_key_exists('product_order_id', $item) && array_key_exists(intval($item['product_order_id']), $productMap)) {
+                        return false;
+                    }
+
+                    return true;
+                }));
 
                 $this->detail_info = [
                     'member_profile' => $this->memberData ?? [],
@@ -144,18 +170,19 @@ class Cart extends ActiveRecord
                 return true;
             }
 
-            if ($this->scenario === Constants::SCENARIO_CREATE) {
-                $items = CoreModel::ensureArray($this->items);
-
+            if ($this->scenario === Constants::SCENARIO_CREATE || $this->scenario === Constants::SCENARIO_UPDATE) {
                 if (!empty($this->cleaning_order_id)) {
+                    $this->items = $this->removeItemsByKeyValue(CoreModel::ensureArray($this->items), 'cleaning_order_id', intval($this->cleaning_order_id));
                     $this->validateCleaning('cleaning_order_id');
                 }
     
                 if (!empty($this->installation_order_id)) {
+                    $this->items = $this->removeItemsByKeyValue(CoreModel::ensureArray($this->items), 'installation_order_id', intval($this->installation_order_id));
                     $this->validateInstallation('installation_order_id');
                 }
     
                 if (!empty($this->product_order_id)) {
+                    $this->items = $this->removeItemsByKeyValue(CoreModel::ensureArray($this->items), 'product_order_id', intval($this->product_order_id));
                     $this->validateProduct('product_order_id');
                 }
             }
@@ -241,6 +268,7 @@ class Cart extends ActiveRecord
         ];
         $item['note'] = $productOrder->note;
 
+        $items = CoreModel::ensureArray($this->items);
         $items[] = $item;
         $this->items = $items;
     }
@@ -299,6 +327,7 @@ class Cart extends ActiveRecord
         $item['qty'] = intval($cleaningOrder->qty);
         $item['note'] = $cleaningOrder->note;
 
+        $items = CoreModel::ensureArray($this->items);
         $items[] = $item;
         $this->items = $items;
     }
@@ -358,6 +387,7 @@ class Cart extends ActiveRecord
         $item['qty'] = intval($installationOrder->qty);
         $item['note'] = $installationOrder->note;
 
+        $items = CoreModel::ensureArray($this->items);
         $items[] = $item;
         $this->items = $items;
     }
