@@ -10,7 +10,7 @@ use app\helpers\Constants;
 use app\models\Cart;
 use app\models\Checkout;
 use app\models\MemberProfile;
-use app\models\Voucher;
+use app\models\reference\Voucher;
 
 class CheckoutController extends CoreController
 {
